@@ -2,16 +2,15 @@ package auth
 
 import (
 	"bufio"
-	"github.com/traviswt/gke-auth-plugin/pkg/conf"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/pkg/apis/clientauthentication/v1beta1"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/antrusd/gke-gcloud-auth-plugin/pkg/conf"
+	"gopkg.in/yaml.v2"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/pkg/apis/clientauthentication/v1beta1"
 )
 
 func GetExecCredential() *v1beta1.ExecCredential {
@@ -49,24 +48,19 @@ func SaveExecCredential(ec *v1beta1.ExecCredential) {
 
 // cacheLocation returns the file to Cache the exec cred to, if blank, don't Cache
 func cacheLocation() string {
-	cacheFileDir := ""
 	kubeconfig := os.Getenv("KUBECONFIG")
 	if kubeconfig != "" {
 		abs, err := filepath.Abs(kubeconfig)
 		if err == nil {
-			dir := filepath.Dir(abs)
-			cacheFileDir = dir
+			return abs + "." + conf.CacheFileName
 		}
 	}
-	if cacheFileDir == "" {
-		return ""
-	}
-	cf := path.Join(cacheFileDir, conf.CacheFileName)
-	return cf
+
+	return ""
 }
 
 func loadFile(file string) (*v1beta1.ExecCredential, error) {
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}

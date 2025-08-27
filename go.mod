@@ -1,4 +1,4 @@
-module github.com/traviswt/gke-auth-plugin
+module github.com/antrusd/gke-gcloud-auth-plugin
 
 go 1.24.4
 

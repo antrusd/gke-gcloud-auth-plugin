@@ -11,7 +11,7 @@ builds:
       - linux
       - windows
       - darwin
-    ldflags: -w -s -X github.com/traviswt/gke-auth-plugin/pkg/conf.Version={{ .Version }} -X github.com/traviswt/gke-auth-plugin/pkg/conf.GitCommit={{ .Commit }}
+    ldflags: -w -s -X github.com/antrusd/gke-gcloud-auth-plugin/pkg/conf.Version={{ .Version }} -X github.com/antrusd/gke-gcloud-auth-plugin/pkg/conf.GitCommit={{ .Commit }}
 
 archives:
   - format: tar.gz

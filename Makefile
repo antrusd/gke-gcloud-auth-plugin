@@ -1,6 +1,6 @@
 VERSION       ?= 0.3.0
 BINDIR        := $(CURDIR)/bin
-BINNAME       ?= gke-auth-plugin
+BINNAME       ?= gke-gcloud-auth-plugin
 GOPATH        = $(shell go env GOPATH)
 GOIMPORTS     = $(GOPATH)/bin/goimports
 
@@ -25,7 +25,7 @@ BINARY_VERSION ?= ${GIT_TAG}
 
 # Only set Version if building a tag or VERSION is set
 ifneq ($(BINARY_VERSION),)
-	LDFLAGS += -X github.com/traviswt/gke-auth-plugin/pkg/conf.Version=${BINARY_VERSION}
+	LDFLAGS += -X github.com/antrusd/gke-gcloud-auth-plugin/pkg/conf.Version=${BINARY_VERSION}
 endif
 
 VERSION_METADATA = unreleased
@@ -34,7 +34,7 @@ ifneq ($(GIT_TAG),)
 	VERSION_METADATA =
 endif
 
-LDFLAGS += -X github.com/traviswt/gke-auth-plugin/pkg/conf.GitCommit=${GIT_COMMIT}
+LDFLAGS += -X github.com/antrusd/gke-gcloud-auth-plugin/pkg/conf.GitCommit=${GIT_COMMIT}
 
 .PHONY: all
 all: build
@@ -92,5 +92,3 @@ info:
 	 @echo "Git Tag:           ${GIT_TAG}"
 	 @echo "Git Commit:        ${GIT_COMMIT}"
 	 @echo "Git Tree State:    ${GIT_DIRTY}"
-
-

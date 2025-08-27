@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
+
+	"github.com/antrusd/gke-gcloud-auth-plugin/pkg/conf"
 	"github.com/spf13/cobra"
-	"github.com/traviswt/gke-auth-plugin/pkg/conf"
 )
 
 func versionCmd() *cobra.Command {

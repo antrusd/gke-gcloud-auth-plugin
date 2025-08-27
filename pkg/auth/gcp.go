@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"golang.org/x/oauth2/google"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	clientauthv1beta1 "k8s.io/client-go/pkg/apis/clientauthentication/v1beta1"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/antrusd/gke-gcloud-auth-plugin/pkg/conf"
+	"golang.org/x/oauth2/google"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	clientauthv1beta1 "k8s.io/client-go/pkg/apis/clientauthentication/v1beta1"
 )
 
 var (
@@ -21,6 +23,8 @@ var (
 )
 
 func Gcp(ctx context.Context) error {
+	var cred *google.Credentials
+
 	ec := GetExecCredential()
 	//use cached exec credential
 	if ec != nil {
@@ -28,10 +32,24 @@ func Gcp(ctx context.Context) error {
 		_, _ = fmt.Fprint(os.Stdout, credString)
 		return nil
 	}
-	//create new exec credential
-	cred, err := google.FindDefaultCredentials(ctx, gcpScopes...)
-	if err != nil {
-		return err
+	if conf.AppCreds != "" {
+		if _, err := os.Stat(conf.AppCreds); err == nil {
+			data, err := os.ReadFile(conf.AppCreds)
+			if err != nil {
+				return err
+			}
+			cred, err = google.CredentialsFromJSON(ctx, data, gcpScopes...)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		//create new exec credential
+		var err error
+		cred, err = google.FindDefaultCredentials(ctx, gcpScopes...)
+		if err != nil {
+			return err
+		}
 	}
 	if cred == nil {
 		return errors.New("failed finding default credentials, cred is nil")
@@ -62,12 +80,9 @@ func newExecCredential(token string, exp time.Time) *clientauthv1beta1.ExecCrede
 	//the google token sometimes contains trailing periods,
 	//they cause problems with various tools, thus right trim
 	token = strings.TrimRightFunc(token, func(r rune) bool {
-		if r == '.' {
-			return true
-		}
-		return false
+		return r == '.'
 	})
-	clientauthv1beta1.SchemeGroupVersion.Identifier()
+	_ = clientauthv1beta1.SchemeGroupVersion.Identifier()
 	ec := &clientauthv1beta1.ExecCredential{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: clientauthv1beta1.SchemeGroupVersion.Identifier(),

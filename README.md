@@ -6,6 +6,12 @@ Google already provides a [gke-gcloud-auth-plugin](https://cloud.google.com/blog
 
 The plugin is for use outside of a cluster; when running in the cluster, mount a service account and use that token to interact with the Kubernetes API.
 
+## Changes from upstream
+
+- Add `--credential/-c` argument to override default json credentials.
+- Put the cache within the same KUBECONFIG file directory.
+- Named after original Google provided plugin.
+
 ## Build
 
 ```shell
@@ -14,9 +20,9 @@ make
 
 Or with Docker:
 ```shell
-docker build -f Dockerfile.dev -t gke-auth-plugin-dev .
+docker build -f Dockerfile.dev -t gke-gcloud-auth-plugin-dev .
 
-docker run -it --rm --name gke-auth-plugin-dev-container -v ${PWD}:/home/nonroot gke-auth-plugin-dev
+docker run -it --rm --name gke-gcloud-auth-plugin-dev-container -v ${PWD}:/home/nonroot gke-gcloud-auth-plugin-dev
 
 make
 ```
@@ -25,13 +31,11 @@ make
 
 ```shell
 # generate ExecCredential
-bin/gke-auth-plugin
+bin/gke-gcloud-auth-plugin
 
 # version
-bin/gke-auth-plugin version
+bin/gke-gcloud-auth-plugin version
 ```
-
-You can straight up replace the gke-gcloud-auth-plugin with this binary, or place on your path and update your kubeconfig exec command to run gke-auth-plugin.
 
 ### Example Exec Section of Kubeconfig
 
@@ -41,7 +45,10 @@ users:
   user:
     exec:
       apiVersion: client.authentication.k8s.io/v1beta1
-      command: gke-auth-plugin
+      command: gke-gcloud-auth-plugin
+      args:
+      - -c
+      - /path/to/adc.json
       provideClusterInfo: true
       interactiveMode: Never
 ```

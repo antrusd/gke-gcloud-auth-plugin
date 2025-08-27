@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/traviswt/gke-auth-plugin/pkg/cmd"
 	"os"
+
+	"github.com/antrusd/gke-gcloud-auth-plugin/pkg/cmd"
 )
 
 func main() {

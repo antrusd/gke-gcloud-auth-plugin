@@ -1,11 +1,12 @@
 package conf
 
 const (
-	BinName       = "gke-auth-plugin"
-	CacheFileName = "gke_auth_plugin_cache"
+	BinName       = "gke-gcloud-auth-plugin"
+	CacheFileName = "gke-gcloud-auth-plugin.cache"
 )
 
 var (
 	Version   string
 	GitCommit string
+	AppCreds  string
 )
